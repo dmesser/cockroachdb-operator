@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cockroachdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cockroachdb
+  template:
+    metadata:
+      labels:
+        name: cockroachdb
+    spec:
+      serviceAccountName: cockroachdb
+      containers:
+        - name: cockroachdb
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "cockroachdb"
