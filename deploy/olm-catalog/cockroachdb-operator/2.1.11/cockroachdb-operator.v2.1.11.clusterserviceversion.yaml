@@ -4,13 +4,13 @@ metadata:
   annotations:
     alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Cockroachdb","metadata":{"name":"example-cockroachdb"},"spec":{"CacheSize":"25%","ClusterDomain":"cluster.local","Component":"cockroachdb","ExternalGrpcName":"grpc","ExternalGrpcPort":26257,"ExternalHttpPort":8080,"HttpName":"http","Image":"cockroachdb/cockroach","ImagePullPolicy":"Always","ImageTag":"v2.1.5","InternalGrpcName":"grpc","InternalGrpcPort":26257,"InternalHttpPort":8080,"JoinExisting":[],"Locality":"","MaxSQLMemory":"25%","MaxUnavailable":1,"Name":"cockroachdb","NetworkPolicy":{"AllowExternal":true,"Enabled":false},"NodeSelector":{},"PodManagementPolicy":"Parallel","Replicas":3,"Resources":{},"Secure":{"Enabled":false,"RequestCertsImage":"cockroachdb/cockroach-k8s-request-cert","RequestCertsImageTag":"0.4","ServiceAccount":{"Create":true,"Name":null}},"Service":{"annotations":{},"type":"ClusterIP"},"Storage":"100Gi","StorageClass":null,"Tolerations":{},"UpdateStrategy":{"type":"RollingUpdate"}}}]'
     capabilities: Basic Install
+    categories: Database
+    containerImage: quay.io/helmoperators/cockroachdb:2.1.11
+    createdAt: 2019-06-17T17-40-43Z
+    description: CockroachDB Operator based on the CockroachDB helm chart
+    repository: https://github.com/cockroachdb/cockroach
+    support: a-robinson
   name: cockroachdb-operator.v2.1.11
-  categories: Database
-  containerImage: quay.io/helmoperators/cockroachdb:2.1.11
-  createdAt: 2019-06-17T17-40-43Z
-  description: CockroachDB Operator based on the CockroachDB helm chart
-  repository: https://github.com/cockroachdb/cockroach
-  support: a-robinson
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
