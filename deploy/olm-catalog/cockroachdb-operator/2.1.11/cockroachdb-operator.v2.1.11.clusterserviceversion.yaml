@@ -1,0 +1,98 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Cockroachdb","metadata":{"name":"example-cockroachdb"},"spec":{"CacheSize":"25%","ClusterDomain":"cluster.local","Component":"cockroachdb","ExternalGrpcName":"grpc","ExternalGrpcPort":26257,"ExternalHttpPort":8080,"HttpName":"http","Image":"cockroachdb/cockroach","ImagePullPolicy":"Always","ImageTag":"v2.1.5","InternalGrpcName":"grpc","InternalGrpcPort":26257,"InternalHttpPort":8080,"JoinExisting":[],"Locality":"","MaxSQLMemory":"25%","MaxUnavailable":1,"Name":"cockroachdb","NetworkPolicy":{"AllowExternal":true,"Enabled":false},"NodeSelector":{},"PodManagementPolicy":"Parallel","Replicas":3,"Resources":{},"Secure":{"Enabled":false,"RequestCertsImage":"cockroachdb/cockroach-k8s-request-cert","RequestCertsImageTag":"0.4","ServiceAccount":{"Create":true,"Name":null}},"Service":{"annotations":{},"type":"ClusterIP"},"Storage":"100Gi","StorageClass":null,"Tolerations":{},"UpdateStrategy":{"type":"RollingUpdate"}}}]'
+    capabilities: Basic Install
+  name: cockroachdb-operator.v2.1.11
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - kind: Cockroachdb
+      name: cockroachdbs.charts.helm.k8s.io
+      version: v1alpha1
+  description: Placeholder description
+  displayName: CockroachDB
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - namespaces
+          verbs:
+          - get
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          - secrets
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - pods
+          - services
+          verbs:
+          - '*'
+        - apiGroups:
+          - batch
+          resources:
+          - jobs
+          verbs:
+          - '*'
+        - apiGroups:
+          - charts.helm.k8s.io
+          resources:
+          - '*'
+          verbs:
+          - '*'
+        serviceAccountName: cockroachdb
+      deployments:
+      - name: cockroachdb
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              name: cockroachdb
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                name: cockroachdb
+            spec:
+              containers:
+              - env:
+                - name: WATCH_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.annotations['olm.targetNamespaces']
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: OPERATOR_NAME
+                  value: cockroachdb
+                image: REPLACE_IMAGE
+                imagePullPolicy: Always
+                name: cockroachdb
+                resources: {}
+              serviceAccountName: cockroachdb
+    strategy: deployment
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  maturity: alpha
+  provider: {}
+  version: 2.1.11
+  replaces: cockroachdb.v2.1.1
