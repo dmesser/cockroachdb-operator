@@ -192,4 +192,4 @@ spec:
     matchLabels:
       alm-owner-etcd: couchbaseoperator
       operated-by: couchbaseoperator
-  version: 2.1.1
+  version: 2.1.11
