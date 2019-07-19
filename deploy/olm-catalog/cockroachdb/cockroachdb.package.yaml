@@ -1,5 +1,5 @@
 channels:
-- currentCSV: cockroachdb-operator.v2.1.11
+- currentCSV: cockroachdb.v2.1.11
   name: stable
 defaultChannel: stable
 packageName: cockroachdb-operator

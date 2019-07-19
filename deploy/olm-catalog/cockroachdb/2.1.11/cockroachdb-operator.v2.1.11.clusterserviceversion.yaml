@@ -10,7 +10,7 @@ metadata:
     description: CockroachDB Operator based on the CockroachDB helm chart
     repository: https://github.com/cockroachdb/cockroach
     support: a-robinson
-  name: cockroachdb-operator.v2.1.11
+  name: cockroachdb.v2.1.11
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
