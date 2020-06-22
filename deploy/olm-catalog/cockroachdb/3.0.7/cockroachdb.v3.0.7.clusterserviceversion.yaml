@@ -152,6 +152,72 @@ spec:
     | `networkPolicy.enabled`                  | Enable NetworkPolicy for CockroachDB's Pods                     | `no`                                             |
     | `networkPolicy.ingress.grpc`             | Whitelist resources to access gRPC port of CockroachDB's Pods   | `[]`                                             |
     | `networkPolicy.ingress.http`             | Whitelist resources to access gRPC port of CockroachDB's Pods   | `[]`                                             |
+
+    ## Upgrading the cluster
+
+    Assuming the name of the `CockroachDB` instance is `example`, follow the steps below to update to a newer version (example used os v19.2.5->v19.2.7) of CockroachDB:
+
+    Launch a temporary interactive pod and start the built-in SQL client:
+    ```shell
+    kubectl run cockroachdb --rm -it \
+    --image=cockroachdb/cockroach \
+    --restart=Never \
+    -- sql --insecure --host=example-cockroachdb-public
+    ```
+
+    > If you are running in secure mode, you will have to provide a client certificate to the cluster in order to authenticate, so the above command will not work. See [here](https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/client-secure.yaml) for an example of how to set up an interactive SQL shell against a secure cluster or [here](https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/example-app-secure.yaml) for an example application connecting to a secure cluster.
+
+    Set `cluster.preserve_downgrade_option`, where `$current_version` is the CockroachDB version currently running (e.g., `19.2`):
+    ```sql
+    > SET CLUSTER SETTING cluster.preserve_downgrade_option = '$current_version';
+    ```
+
+    Exit the shell and delete the temporary pod:
+    ```sql
+    > \q
+    ```
+
+    Kick off the upgrade process by changing the new Docker image, where `$new_version` is the CockroachDB version to which you are upgrading:
+    ```shell
+    kubectl delete job example-cockroachdb-init
+    ```
+    ```shell
+    kubectl patch cockroachdbs example -p '{"spec": {"image":{"tag":"v19.2.7"}}}' --type merge
+    ```
+
+    Kubernetes will carry out a safe [rolling upgrade](https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#updating-statefulsets) of your CockroachDB nodes one-by-one. Monitor the cluster's pods until all have been successfully restarted:
+    ```shell
+    kubectl get pods
+    ```
+    ```
+    NAME                                READY     STATUS              RESTARTS   AGE
+    example-cockroachdb-0            1/1       Running             0          2m
+    example-cockroachdb-1            1/1       Running             0          3m
+    example-cockroachdb-2            1/1       Running             0          3m
+    example-cockroachdb-3            0/1       ContainerCreating   0          25s
+    example-cockroachdb-init-nwjkh   0/1       ContainerCreating   0          6s
+    ```
+    ```shell
+    kubectl get pods \
+    -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}'
+    ```
+    ```
+    example-cockroachdb-0    cockroachdb/cockroach:v19.2.7
+    example-cockroachdb-1    cockroachdb/cockroach:v19.2.7
+    example-cockroachdb-2    cockroachdb/cockroach:v19.2.7
+    ```
+
+    Resume normal operations. Once you are comfortable that the stability and performance of the cluster is what you'd expect post-upgrade, finalize the upgrade:
+    ```shell
+    kubectl run cockroachdb --rm -it \
+    --image=cockroachdb/cockroach \
+    --restart=Never \
+    -- sql --insecure --host=example-cockroachdb-public
+    ```
+    ```sql
+    > RESET CLUSTER SETTING cluster.preserve_downgrade_option;
+    > \q
+    ```
   displayName: CockroachDB
   icon:
   - base64data: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMS44MiAzMiIgd2lkdGg9IjI0ODYiIGhlaWdodD0iMjUwMCI+PHRpdGxlPkNMPC90aXRsZT48cGF0aCBkPSJNMTkuNDIgOS4xN2ExNS4zOSAxNS4zOSAwIDAgMS0zLjUxLjQgMTUuNDYgMTUuNDYgMCAwIDEtMy41MS0uNCAxNS42MyAxNS42MyAwIDAgMSAzLjUxLTMuOTEgMTUuNzEgMTUuNzEgMCAwIDEgMy41MSAzLjkxek0zMCAuNTdBMTcuMjIgMTcuMjIgMCAwIDAgMjUuNTkgMGExNy40IDE3LjQgMCAwIDAtOS42OCAyLjkzQTE3LjM4IDE3LjM4IDAgMCAwIDYuMjMgMGExNy4yMiAxNy4yMiAwIDAgMC00LjQ0LjU3QTE2LjIyIDE2LjIyIDAgMCAwIDAgMS4xM2EuMDcuMDcgMCAwIDAgMCAuMDkgMTcuMzIgMTcuMzIgMCAwIDAgLjgzIDEuNTcuMDcuMDcgMCAwIDAgLjA4IDAgMTYuMzkgMTYuMzkgMCAwIDEgMS44MS0uNTQgMTUuNjUgMTUuNjUgMCAwIDEgMTEuNTkgMS44OCAxNy41MiAxNy41MiAwIDAgMC0zLjc4IDQuNDhjLS4yLjMyLS4zNy42NS0uNTUgMXMtLjIyLjQ1LS4zMy42OS0uMzEuNzItLjQ0IDEuMDhhMTcuNDYgMTcuNDYgMCAwIDAgNC4yOSAxOC43Yy4yNi4yNS41My40OS44MS43M3MuNDQuMzcuNjcuNTQuNTkuNDQuODkuNjRhLjA3LjA3IDAgMCAwIC4wOCAwYy4zLS4yMS42LS40Mi44OS0uNjRzLjQ1LS4zNS42Ny0uNTQuNTUtLjQ4LjgxLS43M2ExNy40NSAxNy40NSAwIDAgMCA1LjM4LTEyLjYxIDE3LjM5IDE3LjM5IDAgMCAwLTEuMDktNi4wOWMtLjE0LS4zNy0uMjktLjczLS40NS0xLjA5cy0uMjItLjQ3LS4zMy0uNjktLjM1LS42Ni0uNTUtMWExNy42MSAxNy42MSAwIDAgMC0zLjc4LTQuNDggMTUuNjUgMTUuNjUgMCAwIDEgMTEuNi0xLjg0IDE2LjEzIDE2LjEzIDAgMCAxIDEuODEuNTQuMDcuMDcgMCAwIDAgLjA4IDBxLjQ0LS43Ni44Mi0xLjU2YS4wNy4wNyAwIDAgMCAwLS4wOUExNi44OSAxNi44OSAwIDAgMCAzMCAuNTd6IiBmaWxsPSIjMTUxZjM0Ii8+PHBhdGggZD0iTTIxLjgyIDE3LjQ3YTE1LjUxIDE1LjUxIDAgMCAxLTQuMjUgMTAuNjkgMTUuNjYgMTUuNjYgMCAwIDEtLjcyLTQuNjggMTUuNSAxNS41IDAgMCAxIDQuMjUtMTAuNjkgMTUuNjIgMTUuNjIgMCAwIDEgLjcyIDQuNjgiIGZpbGw9IiMzNDg1NDAiLz48cGF0aCBkPSJNMTUgMjMuNDhhMTUuNTUgMTUuNTUgMCAwIDEtLjcyIDQuNjggMTUuNTQgMTUuNTQgMCAwIDEtMy41My0xNS4zN0ExNS41IDE1LjUgMCAwIDEgMTUgMjMuNDgiIGZpbGw9IiM3ZGJjNDIiLz48L3N2Zz4=
