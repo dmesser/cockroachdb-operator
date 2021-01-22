@@ -1,4 +1,4 @@
 ## Append samples you want in your CSV to this file as resources ##
 resources:
-- charts.helm.k8s.io_v1alpha1_cockroachdb.yaml
+- charts.operatorhub.io_v1alpha1_cockroachdb.yaml
 # +kubebuilder:scaffold:manifestskustomizesamples

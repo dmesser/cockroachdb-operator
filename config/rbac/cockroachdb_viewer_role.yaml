@@ -5,7 +5,7 @@ metadata:
   name: cockroachdb-viewer-role
 rules:
 - apiGroups:
-  - charts.helm.k8s.io
+  - charts.operatorhub.io
   resources:
   - cockroachdbs
   verbs:
@@ -13,7 +13,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - charts.helm.k8s.io
+  - charts.operatorhub.io
   resources:
   - cockroachdbs/status
   verbs:

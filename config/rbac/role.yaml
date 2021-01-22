@@ -30,10 +30,10 @@ rules:
   - create
 
 ##
-## Rules for charts.helm.k8s.io/v1alpha1, Kind: Cockroachdb
+## Rules for charts.operatorhub.io/v1alpha1, Kind: Cockroachdb
 ##
 - apiGroups:
-  - charts.helm.k8s.io
+  - charts.operatorhub.io
   resources:
   - cockroachdbs
   - cockroachdbs/status
