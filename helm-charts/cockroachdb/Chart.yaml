@@ -1,18 +1,12 @@
 apiVersion: v1
-appVersion: 19.2.5
+appVersion: 20.2.3
 description: CockroachDB is a scalable, survivable, strongly-consistent SQL database.
 home: https://www.cockroachlabs.com
 icon: https://raw.githubusercontent.com/cockroachdb/cockroach/master/docs/media/cockroach_db.png
 maintainers:
-- email: alexdwanerobinson@gmail.com
-  name: a-robinson
-- email: Joel.A.Kenny@gmail.com
-  name: DuskEagle
-- email: joshimhoff13@gmail.com
-  name: joshimhoff
-- email: keith.mcclellan@gmail.com
-  name: keith-mcclellan
+- email: helm-charts@cockroachlabs.com
+  name: cockroachlabs
 name: cockroachdb
 sources:
 - https://github.com/cockroachdb/cockroach
-version: 3.0.7
+version: 5.0.3

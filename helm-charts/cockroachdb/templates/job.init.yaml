@@ -1,4 +1,4 @@
-{{- if not (index .Values.conf `single-node`) }}
+{{- if and (eq (len .Values.conf.join) 0) (not (index .Values.conf `single-node`)) }}
 kind: Job
 apiVersion: batch/v1
 metadata:
@@ -105,6 +105,9 @@ spec:
               --certs-dir=/cockroach-certs/
               {{- else }}
               --insecure
+              {{- end }}
+              {{- with index .Values.conf "cluster-name" }}
+              --cluster-name={{.}}
               {{- end }}
               --host={{ template "cockroachdb.fullname" . }}-0.{{ template "cockroachdb.fullname" . -}}
                      :{{ .Values.service.ports.grpc.internal.port | int64 }}

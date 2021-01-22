@@ -1,0 +1,24 @@
+# permissions for end users to edit cockroachdbs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cockroachdb-editor-role
+rules:
+- apiGroups:
+  - charts.helm.k8s.io
+  resources:
+  - cockroachdbs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - charts.helm.k8s.io
+  resources:
+  - cockroachdbs/status
+  verbs:
+  - get
