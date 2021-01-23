@@ -6,7 +6,7 @@ metadata:
     capabilities: Basic Install
     categories: Database
     certified: "false"
-    containerImage: quay.io/helmoperators/cockroachdb:v5.0.7
+    containerImage: quay.io/helmoperators/cockroachdb:v5.0.3
     createdAt: 2021-01-23T10-00-00Z
     description: CockroachDB Operator based on the CockroachDB helm chart
     repository: https://github.com/dmesser/cockroachdb-operator
