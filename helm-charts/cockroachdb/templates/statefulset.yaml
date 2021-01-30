@@ -102,7 +102,7 @@ spec:
         {{- if .Values.statefulset.podAntiAffinity.type }}
         {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
           requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: kubernetes.io/hostname
+            - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: {{ template "cockroachdb.name" . }}
@@ -114,7 +114,7 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
               podAffinityTerm:
-                topologyKey: kubernetes.io/hostname
+                topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/name: {{ template "cockroachdb.name" . }}
@@ -128,8 +128,26 @@ spec:
         {{- end }}
       {{- end }}
     {{- end }}
+    {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
+      topologySpreadConstraints:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: {{ template "cockroachdb.name" . }}
+            app.kubernetes.io/instance: {{ .Release.Name | quote }}
+          {{- with .Values.statefulset.labels }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.statefulset.topologySpreadConstraints }}
+        maxSkew: {{ .maxSkew }}
+        topologyKey: {{ .topologyKey }}
+        whenUnsatisfiable: {{ .whenUnsatisfiable }}
+      {{- end }}
+    {{- end }}
     {{- with .Values.statefulset.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if .Values.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.statefulset.priorityClassName }}
     {{- end }}
     {{- with .Values.statefulset.tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
@@ -194,8 +212,12 @@ spec:
               --http-port={{ index .Values.conf `http-port` | int64 }}
               --port={{ .Values.conf.port | int64 }}
               --cache={{ .Values.conf.cache }}
-              --max-disk-temp-storage={{ index .Values.conf `max-disk-temp-storage` }}
-              --max-offset={{ index .Values.conf `max-offset` }}
+            {{- with index .Values.conf `max-disk-temp-storage` }}
+              --max-disk-temp-storage={{ . }}
+            {{- end }}
+            {{- with index .Values.conf `max-offset` }}
+              --max-offset={{ . }}
+            {{- end }}
               --max-sql-memory={{ index .Values.conf `max-sql-memory` }}
             {{- with .Values.conf.locality }}
               --locality={{ . }}

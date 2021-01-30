@@ -1,0 +1,8 @@
+domain: charts.operatorhub.io
+layout: helm.sdk.operatorframework.io/v1
+projectName: cockroachdb
+resources:
+- group: charts.operatorhub.io
+  kind: Cockroachdb
+  version: v1alpha1
+version: 3-alpha

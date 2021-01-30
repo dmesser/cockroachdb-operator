@@ -1,0 +1,88 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: manager-role
+rules:
+##
+## Base operator rules
+##
+# We need to get namespaces so the operator can read namespaces to ensure they exist
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+# We need to manage Helm release secrets
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  - serviceaccounts
+  verbs:
+  - "*"
+# We need to create events on CRs about things happening during reconciliation
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+
+##
+## Rules for charts.operatorhub.io/v1alpha1, Kind: Cockroachdb
+##
+- apiGroups:
+  - charts.operatorhub.io
+  resources:
+  - cockroachdbs
+  - cockroachdbs/status
+  - cockroachdbs/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- verbs:
+  - "*"
+  apiGroups:
+  - "apps"
+  resources:
+  - "statefulsets"
+- verbs:
+  - "*"
+  apiGroups:
+  - "batch"
+  resources:
+  - "jobs"
+- verbs:
+  - "*"
+  apiGroups:
+  - "policy"
+  resources:
+  - "poddisruptionbudgets"
+- verbs:
+  - "*"
+  apiGroups:
+  - ""
+  resources:
+  - "services"
+  - "pods"
+- verbs:
+  - "*"
+  apiGroups:
+  - "monitoring.coreos.com"
+  resources:
+  - "servicemonitors"
+- verbs:
+  - "*"
+  apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - "networkpolicies"
+
+# +kubebuilder:scaffold:rules

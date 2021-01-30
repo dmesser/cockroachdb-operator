@@ -1,10 +1,6 @@
----
-- version: v1alpha1
-  group: charts.helm.k8s.io
+# Use the 'create api' subcommand to add watches to this file.
+- group: charts.operatorhub.io
+  version: v1alpha1
   kind: Cockroachdb
   chart: helm-charts/cockroachdb
-  # overrideValues:
-  #   image.repository: $COCKROACH_IMAGE_REPOSITORY
-  #   image.tag: $COCKROACH_IMAGE_TAG
-  #   tls.init.image.repository: $COCKROACH_TLS_IMAGE_REPOSITORY
-  #   tls.init.image.tag: $COCKROACH_TLS_IMAGE_TAG
+# +kubebuilder:scaffold:watch
