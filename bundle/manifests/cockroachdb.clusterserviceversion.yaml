@@ -498,6 +498,7 @@ spec:
           resources:
           - secrets
           - configmaps
+          - serviceaccounts
           verbs:
           - '*'
         - apiGroups:
