@@ -495,7 +495,7 @@ spec:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
                 - --leader-election-id=cockroachdb-operator
-                image: controller:latest
+                image: quay.io/helmoperators/cockroachdb:v5.0.3
                 name: manager
                 resources:
                   limits:
