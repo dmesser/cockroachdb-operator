@@ -453,6 +453,12 @@ spec:
           - pods
           verbs:
           - '*'
+        - verbs:
+          - "*"
+          apiGroups:
+          - "monitoring.coreos.com"
+          resources:
+          - "servicemonitors"
         - apiGroups:
           - authentication.k8s.io
           resources:

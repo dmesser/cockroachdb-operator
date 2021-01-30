@@ -71,5 +71,11 @@ rules:
   resources:
   - "services"
   - "pods"
+- verbs:
+  - "*"
+  apiGroups:
+  - "monitoring.coreos.com"
+  resources:
+  - "servicemonitors"
 
 # +kubebuilder:scaffold:rules
