@@ -26,7 +26,7 @@ spec:
       - image: controller:latest
         args:
         - "--enable-leader-election"
-        - "--leader-election-id=cockroachdb-operator"
+        - "--leader-election-id=cockroachdb"
         name: manager
         resources:
           limits:

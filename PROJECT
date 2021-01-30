@@ -1,6 +1,6 @@
 domain: charts.operatorhub.io
 layout: helm.sdk.operatorframework.io/v1
-projectName: cockroachdb-operator
+projectName: cockroachdb
 resources:
 - group: charts.operatorhub.io
   kind: Cockroachdb

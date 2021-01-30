@@ -174,7 +174,7 @@ metadata:
     operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
     repository: https://github.com/dmesser/cockroachdb-operator
     support: dmesser
-  name: cockroachdb-operator.v5.0.3
+  name: cockroachdb.v5.0.3
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -467,7 +467,7 @@ spec:
           - create
         serviceAccountName: default
       deployments:
-      - name: cockroachdb-operator-controller-manager
+      - name: cockroachdb-controller-manager
         spec:
           replicas: 1
           selector:
@@ -494,7 +494,7 @@ spec:
               - args:
                 - --metrics-addr=127.0.0.1:8080
                 - --enable-leader-election
-                - --leader-election-id=cockroachdb-operator
+                - --leader-election-id=cockroachdb
                 image: quay.io/helmoperators/cockroachdb:v5.0.3
                 name: manager
                 resources:
