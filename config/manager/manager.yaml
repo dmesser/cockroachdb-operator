@@ -23,7 +23,27 @@ spec:
         control-plane: controller-manager
     spec:
       containers:
-      - image: controller:latest
+      - env:
+        - name: WATCH_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['olm.targetNamespaces']
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: OPERATOR_NAME
+          value: cockroachdb
+        # - name: COCKROACH_IMAGE_REPOSITORY
+        #   value: docker.io/cockroachdb/cockroach
+        # - name: COCKROACH_IMAGE_TAG
+        #   value: v19.2.5
+        # - name: COCKROACH_TLS_IMAGE_REPOSITORY
+        #   value: docker.io/cockroachdb/cockroach-k8s-request-cert
+        # - name: COCKROACH_TLS_IMAGE_TAG
+        #   value: "0.4"
+        # image: quay.io/helmoperators/cockroachdb@sha256:fa7263b3e18f8f7d6b6c8f8105782861712be5655058ec9bc2002f85078c8e32
+        image: controller:latest
         args:
         - "--enable-leader-election"
         - "--leader-election-id=cockroachdb"
