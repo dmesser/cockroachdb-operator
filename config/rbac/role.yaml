@@ -77,5 +77,11 @@ rules:
   - "monitoring.coreos.com"
   resources:
   - "servicemonitors"
+- verbs:
+  - "*"
+  apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - "networkpolicies"
 
 # +kubebuilder:scaffold:rules

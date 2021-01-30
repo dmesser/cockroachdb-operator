@@ -459,6 +459,12 @@ spec:
           - "monitoring.coreos.com"
           resources:
           - "servicemonitors"
+        - verbs:
+          - "*"
+          apiGroups:
+          - "networking.k8s.io"
+          resources:
+          - "networkpolicies"
         - apiGroups:
           - authentication.k8s.io
           resources:
