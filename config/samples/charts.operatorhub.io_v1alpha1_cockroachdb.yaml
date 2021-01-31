@@ -22,7 +22,7 @@ spec:
     credentials: {}
     pullPolicy: IfNotPresent
     repository: cockroachdb/cockroach
-    tag: v20.2.3
+    tag: v20.2.4
   ingress:
     annotations: {}
     enabled: false
